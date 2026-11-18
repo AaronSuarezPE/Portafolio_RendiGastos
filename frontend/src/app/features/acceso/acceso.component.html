@@ -1,0 +1,133 @@
+<section class="acceso">
+  <div class="acceso__intro">
+    <h1>Tus rendiciones de gastos, sin papeleo</h1>
+    <p>
+      Registra tus gastos, adjunta el comprobante y envíalos a tu aprobador. Recibes un aviso cuando se aprueba
+      o se rechaza, incluso desde el celular.
+    </p>
+    <ul>
+      <li>Cada gasto se valida contra el límite de su categoría.</li>
+      <li>Si la categoría lo exige, no se envía sin comprobante.</li>
+      <li>Aprobación con motivo de rechazo e historial completo.</li>
+    </ul>
+  </div>
+
+  <div class="tarjeta acceso__form">
+    @if (error(); as mensaje) {
+      <p class="aviso aviso--error" role="alert">{{ mensaje }}</p>
+    }
+
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="error.set(null)">
+      <mat-tab label="Ingresar">
+        <form class="formulario" [formGroup]="formLogin" (ngSubmit)="ingresar()" novalidate>
+          <p class="leyenda"><span class="obligatorio">*</span> Campo obligatorio</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Correo <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Ej.: ana@correo.com"
+                   autocomplete="email" inputmode="email" required />
+            @if (formLogin.controls.email.touched && formLogin.controls.email.invalid) {
+              <mat-error>
+                @if (formLogin.controls.email.hasError('obligatorio')) { Escribe tu correo }
+                @else { Escribe un correo válido, por ejemplo ana&#64;correo.com }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Clave <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+            <input matInput [type]="verClave() ? 'text' : 'password'" formControlName="clave"
+                   placeholder="Tu clave" autocomplete="current-password" required />
+            <button mat-icon-button matSuffix type="button" class="ver-clave"
+                    (click)="verClave.set(!verClave())" [attr.aria-pressed]="verClave()"
+                    [attr.aria-label]="verClave() ? 'Ocultar clave' : 'Mostrar clave'">
+              {{ verClave() ? 'Ocultar' : 'Ver' }}
+            </button>
+            @if (formLogin.controls.clave.touched && formLogin.controls.clave.invalid) {
+              <mat-error>Escribe tu clave</mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-flat-button type="submit" [disabled]="trabajando()">
+            @if (trabajando()) { Ingresando… } @else { Ingresar }
+          </button>
+        </form>
+      </mat-tab>
+
+      <mat-tab label="Crear cuenta">
+        <form class="formulario" [formGroup]="formRegistro" (ngSubmit)="registrar()" novalidate>
+          <p class="leyenda"><span class="obligatorio">*</span> Campo obligatorio</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej.: Ana Torres" autocomplete="name"
+                   maxlength="100" required />
+            @if (formRegistro.controls.nombre.touched && formRegistro.controls.nombre.invalid) {
+              <mat-error>Escribe tu nombre (entre 2 y 100 caracteres)</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Correo <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Ej.: ana@correo.com"
+                   autocomplete="email" inputmode="email" maxlength="150" required />
+            @if (formRegistro.controls.email.touched && formRegistro.controls.email.invalid) {
+              <mat-error>
+                @if (formRegistro.controls.email.hasError('obligatorio')) { Escribe tu correo }
+                @else { Escribe un correo válido, por ejemplo ana&#64;correo.com }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Clave <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+            <input matInput [type]="verClave() ? 'text' : 'password'" formControlName="clave"
+                   placeholder="Mínimo 8 caracteres" autocomplete="new-password" maxlength="100"
+                   (input)="revalidarRepeticion()" required />
+            <mat-hint>Mínimo 8 caracteres, con letras y números.</mat-hint>
+            @if (formRegistro.controls.clave.touched && formRegistro.controls.clave.invalid) {
+              <mat-error>
+                @if (formRegistro.controls.clave.hasError('claveDebil')) { La clave debe incluir letras y números }
+                @else { La clave debe tener al menos 8 caracteres }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Repite la clave <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+            <input matInput [type]="verClave() ? 'text' : 'password'" formControlName="repetirClave"
+                   placeholder="Escribe la misma clave" autocomplete="new-password" maxlength="100" required />
+            <button mat-icon-button matSuffix type="button" class="ver-clave"
+                    (click)="verClave.set(!verClave())" [attr.aria-pressed]="verClave()"
+                    [attr.aria-label]="verClave() ? 'Ocultar claves' : 'Mostrar claves'">
+              {{ verClave() ? 'Ocultar' : 'Ver' }}
+            </button>
+            @if (formRegistro.controls.repetirClave.touched && formRegistro.controls.repetirClave.invalid) {
+              <mat-error>
+                @if (formRegistro.controls.repetirClave.hasError('distinta')) { Las claves no coinciden }
+                @else { Repite la clave }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-flat-button type="submit" [disabled]="trabajando()">
+            @if (trabajando()) { Creando cuenta… } @else { Crear cuenta }
+          </button>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+
+    @if (cuentasDemo) {
+      <div class="separador"><span>o prueba una cuenta de demostración</span></div>
+      <div class="demos">
+        @for (d of demos; track d.rol) {
+          <button mat-stroked-button type="button" class="demo" (click)="entrarDemo(d.email)" [disabled]="trabajando()">
+            <strong>{{ d.rol }}</strong>
+            <span>{{ d.ayuda }}</span>
+          </button>
+        }
+      </div>
+      <p class="nota">Cuentas de ejemplo con datos ficticios.</p>
+    }
+  </div>
+</section>

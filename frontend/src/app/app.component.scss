@@ -1,0 +1,125 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--fondo-tarjeta);
+  border-bottom: 1px solid var(--borde);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.marca__logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  font-weight: 700;
+}
+
+.marca__nombre {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.menu {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  a {
+    position: relative;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &.activo {
+      background: var(--fondo-pagina);
+    }
+
+    &.activo {
+      font-weight: 500;
+      color: var(--mat-sys-primary);
+    }
+  }
+}
+
+.insignia {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--error);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.barra__usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.barra__nombre {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--texto-suave);
+}
+
+.contenido {
+  flex: 1;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  box-sizing: border-box;
+}
+
+.pie {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 800px) {
+  .barra {
+    flex-wrap: wrap;
+  }
+
+  .menu {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .barra {
+    padding: 10px 16px;
+  }
+
+  .barra__nombre {
+    display: none;
+  }
+}

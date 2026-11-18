@@ -1,0 +1,105 @@
+<app-panel-lateral [titulo]="titulo" (cerrar)="cerrar.emit()">
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate id="form-gasto">
+    <p class="leyenda"><span class="obligatorio">*</span> Campo obligatorio</p>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Categoría <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+      <mat-select formControlName="codCategoria" placeholder="Elige una categoría">
+        @for (c of categorias(); track c.codCategoria) {
+          <mat-option [value]="c.codCategoria">{{ c.nombre }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.codCategoria.touched && form.controls.codCategoria.invalid) {
+        <mat-error>Elige una categoría</mat-error>
+      }
+    </mat-form-field>
+
+    @if (categoriaElegida; as cat) {
+      <p class="regla" id="regla-categoria">
+        Límite por gasto: <strong>{{ dinero(cat.limite) }}</strong>.
+        @if (cat.comprobanteObligatorio) { Esta categoría <strong>exige comprobante</strong>. }
+        @else { El comprobante es opcional. }
+      </p>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha del gasto <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+      <input matInput type="date" formControlName="fecha" [min]="minimaFecha" [max]="maximaFecha"
+             placeholder="dd/mm/aaaa" />
+      <mat-hint>Hasta 90 días atrás; no puede ser futura.</mat-hint>
+      @if (form.controls.fecha.touched && form.controls.fecha.invalid) {
+        <mat-error>
+          @if (form.controls.fecha.hasError('rango')) { La fecha debe estar dentro de los últimos 90 días y no ser futura }
+          @else { Indica la fecha del gasto }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Descripción <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+      <input matInput formControlName="descripcion" maxlength="200" placeholder="Ej.: Taxi al aeropuerto" />
+      @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
+        <mat-error>Describe el gasto (entre 3 y 200 caracteres)</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Monto <span class="obligatorio" aria-hidden="true">*</span></mat-label>
+      <input matInput type="number" inputmode="decimal" step="0.01" min="0.01" formControlName="monto"
+             placeholder="Ej.: 45.50" />
+      @if (form.controls.monto.touched && form.controls.monto.invalid) {
+        <mat-error>
+          @if (form.controls.monto.hasError('limite')) { El monto supera el límite de la categoría ({{ dinero(categoriaElegida!.limite) }}) }
+          @else if (form.controls.monto.hasError('decimales')) { Usa como máximo 2 decimales }
+          @else { Escribe un monto mayor que 0 }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <fieldset class="comprobante">
+      <legend>
+        Comprobante
+        @if (comprobanteObligatorio) { <span class="obligatorio" aria-hidden="true">*</span> }
+        @else { <span class="opcional">(opcional)</span> }
+      </legend>
+
+      <p class="ayuda-archivo" id="ayuda-archivo">
+        {{ textoFormatos }} Máximo {{ tamanoMaximo }} MB.
+      </p>
+
+      @if (tieneComprobanteGuardado) {
+        <p class="archivo">
+          <span>Guardado: <strong>{{ gasto()!.comprobante }}</strong></span>
+          <button type="button" mat-button (click)="quitarGuardado()">Quitar</button>
+        </p>
+      }
+
+      @if (archivo(); as a) {
+        <p class="archivo">
+          <span>Elegido: <strong>{{ a.name }}</strong> ({{ formatearTamano(a.size) }})</span>
+          <button type="button" mat-button (click)="quitarArchivoElegido()">Quitar</button>
+        </p>
+      }
+
+      <input #entradaArchivo type="file" class="oculto" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+             aria-describedby="ayuda-archivo" (change)="elegirArchivo($event)" />
+      <button type="button" mat-stroked-button (click)="entrada()!.nativeElement.click()">
+        {{ archivo() || tieneComprobanteGuardado ? 'Cambiar archivo' : 'Elegir archivo' }}
+      </button>
+
+      @if (errorArchivo(); as e) {
+        <p class="aviso aviso--error" role="alert">{{ e }}</p>
+      }
+      @if (intentado() && faltaComprobante && !errorArchivo()) {
+        <p class="campo-error" role="alert">Esta categoría exige adjuntar el comprobante.</p>
+      }
+    </fieldset>
+  </form>
+
+  <ng-container pie>
+    <button mat-button type="button" (click)="cerrar.emit()" [disabled]="trabajando()">Cancelar</button>
+    <button mat-flat-button type="submit" form="form-gasto" [disabled]="trabajando()">
+      {{ trabajando() ? 'Guardando…' : 'Guardar gasto' }}
+    </button>
+  </ng-container>
+</app-panel-lateral>

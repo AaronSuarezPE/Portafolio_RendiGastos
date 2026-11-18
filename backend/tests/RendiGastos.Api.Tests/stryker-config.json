@@ -1,0 +1,17 @@
+{
+  "stryker-config": {
+    "project": "RendiGastos.Api.csproj",
+    "solution": "../../RendiGastos.sln",
+    "reporters": ["html", "progress", "json"],
+    "mutate": [
+      "**/Servicios/ClaveService.cs",
+      "**/Servicios/Negocio.cs",
+      "**/Servicios/ValidadorArchivo.cs",
+      "**/Servicios/Autenticacion.cs"
+    ],
+    "ignore-methods": ["Log*"],
+    "coverage-analysis": "perTest",
+    "concurrency": 4,
+    "thresholds": { "high": 85, "low": 70, "break": 70 }
+  }
+}

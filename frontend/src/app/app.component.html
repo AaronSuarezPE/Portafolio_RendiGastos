@@ -1,0 +1,39 @@
+<header class="barra">
+  <a class="marca" routerLink="/rendiciones" aria-label="RendiGastos, ir a mis rendiciones">
+    <span class="marca__logo" aria-hidden="true">R</span>
+    <span class="marca__nombre">RendiGastos</span>
+  </a>
+
+  @if (auth.sesion(); as sesion) {
+    <nav class="menu" aria-label="Principal">
+      <a routerLink="/rendiciones" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: false }">Mis rendiciones</a>
+      @if (auth.esAprobador()) {
+        <a routerLink="/por-aprobar" routerLinkActive="activo">Por aprobar</a>
+      }
+      @if (auth.esAdministrador()) {
+        <a routerLink="/usuarios" routerLinkActive="activo">Usuarios</a>
+        <a routerLink="/categorias" routerLinkActive="activo">Categorías</a>
+      }
+      <a routerLink="/avisos" routerLinkActive="activo" class="menu__avisos"
+         [attr.aria-label]="'Avisos' + (notificaciones.noLeidos() > 0 ? ', ' + notificaciones.noLeidos() + ' sin leer' : '')">
+        Avisos
+        @if (notificaciones.noLeidos() > 0) {
+          <span class="insignia" aria-hidden="true">{{ notificaciones.noLeidos() > 99 ? '99+' : notificaciones.noLeidos() }}</span>
+        }
+      </a>
+    </nav>
+
+    <div class="barra__usuario">
+      <span class="barra__nombre">{{ sesion.nombre }} · {{ sesion.rol }}</span>
+      <button mat-stroked-button type="button" (click)="auth.cerrarSesion()">Salir</button>
+    </div>
+  }
+</header>
+
+<main class="contenido">
+  <router-outlet />
+</main>
+
+<footer class="pie">
+  Proyecto de portafolio de Aarón Suárez · Angular 19 · .NET 9 · SQL Server
+</footer>

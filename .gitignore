@@ -1,0 +1,24 @@
+# Compilados y dependencias
+bin/
+obj/
+node_modules/
+.angular/
+*.user
+
+# Registros y secretos locales
+Logs/
+*.log
+appsettings.*.local.json
+.env
+
+# Material interno (no se publica)
+_OLD_REVISAR/
+publicar/
+Credenciales/
+
+# Informes y temporales de pruebas
+StrykerOutput/
+.stryker-tmp/
+reports/
+test-results/
+playwright-report/

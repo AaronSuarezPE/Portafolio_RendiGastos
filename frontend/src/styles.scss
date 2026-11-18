@@ -1,0 +1,139 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+
+  --fondo-pagina: #f4f6fa;
+  --fondo-tarjeta: #ffffff;
+  --borde: #dde2ec;
+  --texto-suave: #5b6478;
+  --error: #b3261e;
+  --error-fondo: #fdecea;
+  --aviso: #8a5a00;
+  --aviso-fondo: #fff4d6;
+  --ok: #1b6e3a;
+  --ok-fondo: #e3f4e8;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo-pagina);
+  color: var(--mat-sys-on-surface);
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+/* Estilos compartidos por las pantallas */
+.tarjeta {
+  background: var(--fondo-tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.aviso--error {
+  background: var(--error-fondo);
+  color: var(--error);
+}
+
+.aviso--info {
+  background: var(--aviso-fondo);
+  color: var(--aviso);
+}
+
+.aviso--ok {
+  background: var(--ok-fondo);
+  color: var(--ok);
+}
+
+.obligatorio {
+  color: var(--error);
+  font-weight: 700;
+}
+
+.leyenda {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.campo-error {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--error);
+}
+
+:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+/* El asterisco rojo de cada etiqueta se dibuja a mano; se oculta el de Material para no repetirlo */
+.mat-mdc-form-field-required-marker {
+  display: none;
+}
+
+/* Botón de acción destructiva (eliminar, rechazar) */
+.boton-peligro {
+  --mdc-filled-button-container-color: var(--error);
+  --mat-button-filled-container-color: var(--error);
+  --mdc-filled-button-label-text-color: #fff;
+  --mat-button-filled-label-text-color: #fff;
+}
+
+/* Etiqueta de estado de una rendición */
+.estado {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.estado--borrador {
+  background: #e8eaf0;
+  color: #3d4557;
+}
+
+.estado--enviada {
+  background: var(--aviso-fondo);
+  color: var(--aviso);
+}
+
+.estado--aprobada {
+  background: var(--ok-fondo);
+  color: var(--ok);
+}
+
+.estado--rechazada {
+  background: var(--error-fondo);
+  color: var(--error);
+}

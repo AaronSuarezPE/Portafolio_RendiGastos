@@ -1,0 +1,129 @@
+<section>
+  <a class="volver" [routerLink]="puedeDecidir() ? '/por-aprobar' : '/rendiciones'">← Volver a la lista</a>
+
+  @if (cargando()) {
+    <p class="vacio" role="status">Cargando…</p>
+  } @else if (error()) {
+    <p class="aviso aviso--error" role="alert">{{ error() }}</p>
+  } @else if (detalle()) {
+    @let d = detalle()!;
+    <header class="cabecera tarjeta">
+      <div class="cabecera__texto">
+        <h1>{{ d.titulo }}</h1>
+        <p class="meta">
+          {{ d.solicitante }} · creada el {{ d.fechaCreacion }}
+          @if (d.fechaEnvio) { · enviada el {{ d.fechaEnvio }} }
+        </p>
+        <p class="meta">
+          Aprobador: <strong>{{ d.aprobador ?? 'sin asignar' }}</strong>
+        </p>
+      </div>
+      <div class="cabecera__lado">
+        <span [class]="claseEstado(d.codEstado)">{{ d.estado }}</span>
+        <span class="total">{{ dinero(d.total) }}</span>
+      </div>
+    </header>
+
+    @if (d.codEstado === 4 && d.motivoRechazo) {
+      <div class="aviso aviso--error" role="status">
+        <strong>Motivo del rechazo{{ d.resolvio ? ' (' + d.resolvio + ')' : '' }}:</strong> {{ d.motivoRechazo }}
+      </div>
+    }
+
+    @if (puedeEditar() && sinComprobante() > 0) {
+      <div class="aviso aviso--info" role="status">
+        {{ sinComprobante() }} gasto(s) necesitan comprobante antes de poder enviar la rendición.
+      </div>
+    }
+
+    <div class="acciones">
+      @if (puedeEditar()) {
+        <button mat-flat-button type="button" (click)="nuevoGasto()">Agregar gasto</button>
+        <button mat-stroked-button type="button" (click)="enviar()" [disabled]="trabajando()">Enviar para aprobación</button>
+        <button mat-button type="button" (click)="panel.set('titulo')">Cambiar título</button>
+        <button mat-button type="button" class="texto-peligro" (click)="eliminar()" [disabled]="trabajando()">Eliminar rendición</button>
+      }
+      @if (puedeReabrir()) {
+        <button mat-flat-button type="button" (click)="reabrir()" [disabled]="trabajando()">Corregir y volver a enviar</button>
+      }
+      @if (puedeDecidir()) {
+        <button mat-flat-button type="button" (click)="panel.set('aprobacion')">Aprobar</button>
+        <button mat-flat-button type="button" class="boton-peligro" (click)="panel.set('rechazo')">Rechazar</button>
+      }
+    </div>
+
+    <h2 class="subtitulo">Gastos ({{ d.gastos.length }})</h2>
+    @if (d.gastos.length === 0) {
+      <div class="tarjeta vacio">
+        @if (puedeEditar()) { <p>Aún no hay gastos. Usa «Agregar gasto» para registrar el primero.</p> }
+        @else { <p>Esta rendición no tiene gastos.</p> }
+      </div>
+    } @else {
+      <ul class="gastos">
+        @for (g of d.gastos; track g.codGasto) {
+          <li class="gasto tarjeta">
+            <div class="gasto__principal">
+              <strong>{{ g.descripcion }}</strong>
+              <span class="gasto__detalle">{{ g.categoria }} · {{ g.fecha }}</span>
+              @if (g.comprobante) {
+                <button type="button" class="enlace" (click)="verComprobante(g)">
+                  Ver comprobante: {{ g.comprobante }} ({{ formatearTamano(g.tamanoComprobante) }})
+                </button>
+              } @else if (g.comprobanteObligatorio) {
+                <span class="falta">Falta el comprobante (obligatorio en esta categoría)</span>
+              } @else {
+                <span class="gasto__detalle">Sin comprobante</span>
+              }
+            </div>
+            <div class="gasto__lado">
+              <span class="total">{{ dinero(g.monto) }}</span>
+              @if (puedeEditar()) {
+                <span class="gasto__botones">
+                  <button mat-button type="button" (click)="corregirGasto(g)">Corregir</button>
+                  <button mat-button type="button" class="texto-peligro" (click)="eliminarGasto(g)" [disabled]="trabajando()">Eliminar</button>
+                </span>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <h2 class="subtitulo">Historial</h2>
+    <ol class="historial">
+      @for (h of d.historial; track h.codHistorial) {
+        <li>
+          <span class="historial__fecha">{{ h.fecha }} {{ h.hora }}</span>
+          <span><strong>{{ h.accion }}</strong> · {{ h.usuario }}</span>
+          @if (h.comentario) { <span class="historial__nota">{{ h.comentario }}</span> }
+        </li>
+      }
+    </ol>
+
+    @switch (panel()) {
+      @case ('titulo') {
+        <app-panel-texto titulo="Cambiar título" etiqueta="Título" placeholder="Ej.: Viaje a Cusco, octubre"
+          [valorInicial]="d.titulo" [minimo]="3" [maximo]="100" [trabajando]="trabajando()"
+          (confirmar)="guardarTitulo($event)" (cerrar)="cerrarPanel()" />
+      }
+      @case ('gasto') {
+        <app-panel-gasto [categorias]="categorias()" [gasto]="gastoEnEdicion()" [trabajando]="trabajando()"
+          (confirmar)="guardarGasto($event)" (cerrar)="cerrarPanel()" />
+      }
+      @case ('rechazo') {
+        <app-panel-texto titulo="Rechazar rendición" etiqueta="Motivo del rechazo" [multilinea]="true"
+          placeholder="Ej.: Falta el detalle de la visita al cliente"
+          ayuda="La persona verá este motivo y podrá corregir y volver a enviar."
+          textoBoton="Rechazar" [peligroso]="true" [minimo]="10" [maximo]="500" [trabajando]="trabajando()"
+          (confirmar)="rechazar($event)" (cerrar)="cerrarPanel()" />
+      }
+      @case ('aprobacion') {
+        <app-panel-texto titulo="Aprobar rendición" etiqueta="Comentario" [multilinea]="true" [obligatorio]="false"
+          placeholder="Ej.: Todo en orden (opcional)"
+          ayuda="Puedes dejar un comentario para la persona. Es opcional."
+          textoBoton="Aprobar" [maximo]="500" [trabajando]="trabajando()"
+          (confirmar)="aprobar($event)" (cerrar)="cerrarPanel()" />
+      }
+    }
+  }
+</section>

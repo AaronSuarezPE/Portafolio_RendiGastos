@@ -1,0 +1,101 @@
+.acceso {
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 420px);
+  gap: 40px;
+  align-items: start;
+  padding-top: 24px;
+}
+
+.acceso__intro {
+  h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 0 0 16px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--texto-suave);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.8;
+  }
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 4px 12px;
+}
+
+.ver-clave {
+  width: auto;
+  padding: 0 8px;
+  font-size: 0.8rem;
+}
+
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+  color: var(--texto-suave);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--borde);
+  }
+}
+
+.demos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: auto;
+  padding: 8px 16px;
+  text-align: left;
+
+  span {
+    font-size: 0.8rem;
+    color: var(--texto-suave);
+  }
+}
+
+.nota {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 800px) {
+  .acceso {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .acceso__intro h1 {
+    font-size: 1.6rem;
+  }
+}
+
+/* La pestaña inactiva queda fuera de la vista, así que se recorta; el relleno evita cortar el contorno de los campos */
+.acceso__form ::ng-deep .mat-mdc-tab-body,
+.acceso__form ::ng-deep .mat-mdc-tab-body-content {
+  overflow: hidden;
+}

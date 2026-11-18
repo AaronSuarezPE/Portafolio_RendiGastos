@@ -1,0 +1,160 @@
+.volver {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  h1 {
+    font-size: 1.5rem;
+    overflow-wrap: anywhere;
+  }
+}
+
+.meta {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+
+.cabecera__lado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.total {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 8px;
+}
+
+.subtitulo {
+  margin: 24px 0 10px;
+  font-size: 1.1rem;
+}
+
+.gastos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gasto {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.gasto__principal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.gasto__detalle {
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.gasto__lado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.gasto__botones {
+  display: flex;
+}
+
+.enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mat-sys-primary);
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.falta {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--error);
+}
+
+.texto-peligro {
+  --mdc-text-button-label-text-color: var(--error);
+  --mat-text-button-label-text-color: var(--error);
+}
+
+.historial {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0 0 0 18px;
+  border-left: 2px solid var(--borde);
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.92rem;
+  }
+}
+
+.historial__fecha {
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+
+.historial__nota {
+  color: var(--texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.vacio {
+  padding: 20px;
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 600px) {
+  .cabecera,
+  .gasto {
+    flex-direction: column;
+  }
+
+  .cabecera__lado,
+  .gasto__lado {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,8 @@
+<Project>
+  <!-- Análisis estático: Las advertencias del compilador y de los analizadores rompen la compilación. -->
+  <PropertyGroup>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,77 @@
+<section>
+  <header class="cabecera">
+    <div>
+      <h1>{{ modoAprobar ? 'Por aprobar' : 'Mis rendiciones' }}</h1>
+      <p class="sub">
+        @if (modoAprobar) { Rendiciones de las personas a tu cargo que esperan tu decisión. }
+        @else { Agrupa tus gastos en una rendición y envíala a tu aprobador. }
+      </p>
+    </div>
+    @if (!modoAprobar) {
+      <button mat-flat-button type="button" (click)="panelNueva.set(true)">Nueva rendición</button>
+    }
+  </header>
+
+  <div class="filtros">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="estado" (selectionChange)="cargar()" aria-label="Filtrar por estado">
+        @for (e of estados; track e.nombre) {
+          <mat-option [value]="e.codigo">{{ e.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (error(); as mensaje) {
+    <p class="aviso aviso--error" role="alert">{{ mensaje }} <button mat-button type="button" (click)="cargar()">Reintentar</button></p>
+  }
+
+  @if (cargando()) {
+    <p class="vacio" role="status">Cargando…</p>
+  } @else if (lista().length === 0 && !error()) {
+    <div class="tarjeta vacio">
+      @if (modoAprobar) { <p>No hay rendiciones con este filtro. Cuando alguien te envíe una, aparecerá aquí.</p> }
+      @else {
+        <p>Todavía no tienes rendiciones con este filtro.</p>
+        <button mat-stroked-button type="button" (click)="panelNueva.set(true)">Crear la primera</button>
+      }
+    </div>
+  } @else {
+    <ul class="lista">
+      @for (r of lista(); track r.codRendicion) {
+        <li>
+          <a class="fila tarjeta" [routerLink]="['/rendiciones', r.codRendicion]">
+            <div class="fila__principal">
+              <strong>{{ r.titulo }}</strong>
+              <span class="fila__detalle">
+                @if (modoAprobar) { {{ r.solicitante }} · }
+                {{ r.cantidadGastos }} {{ r.cantidadGastos === 1 ? 'gasto' : 'gastos' }}
+                · creada el {{ r.fechaCreacion }}
+                @if (r.fechaEnvio) { · enviada el {{ r.fechaEnvio }} }
+              </span>
+            </div>
+            <div class="fila__lado">
+              <span class="total">{{ dinero(r.total) }}</span>
+              <span [class]="claseEstado(r.codEstado)">{{ r.estado }}</span>
+            </div>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (panelNueva()) {
+    <app-panel-texto
+      titulo="Nueva rendición"
+      etiqueta="Título"
+      placeholder="Ej.: Viaje a Cusco, octubre"
+      ayuda="Dale un nombre que te ayude a reconocerla. Después agregarás los gastos uno a uno."
+      textoBoton="Crear rendición"
+      [minimo]="3"
+      [maximo]="100"
+      [trabajando]="guardando()"
+      (confirmar)="crear($event)"
+      (cerrar)="panelNueva.set(false)" />
+  }
+</section>
